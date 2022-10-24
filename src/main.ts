@@ -8,6 +8,6 @@ async function bootstrap() {
     type: VersioningType.MEDIA_TYPE,
     key: 'v=',
   });
-  await app.listen(3000);
+  await app.listen(8080);
 }
 bootstrap();
