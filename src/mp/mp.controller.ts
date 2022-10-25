@@ -11,11 +11,15 @@ export class MpController {
     @Query('signature') signature,
     @Query('timestamp') timestamp,
     @Query('nonce') nonce,
+    @Query('echostr') echostr,
   ) {
     const mpToken = this.configService.get<string>('MP_TOKEN');
-    const tmpArr = CryptoJs.SHA1([mpToken, timestamp, nonce].sort().join(''));
+    const tmpArr = CryptoJs.SHA1(
+      [mpToken, timestamp, nonce].sort().join(''),
+    ).toString();
+    console.log(signature, timestamp, nonce, mpToken, tmpArr);
     if (tmpArr === signature) {
-      return true;
+      return echostr;
     } else {
       return false;
     }
