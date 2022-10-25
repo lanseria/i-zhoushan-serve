@@ -1,4 +1,5 @@
 import { Body, Controller, Post, Version } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { SampleService } from './sample.service';
 
 @Controller({
