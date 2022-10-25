@@ -1,17 +1,19 @@
 import { Module } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import { MongooseModule } from '@nestjs/mongoose';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import configuration from './config/configuration';
+import { configConfiguration } from './config';
 import { SampleModule } from './sample/sample.module';
 import { MpModule } from './mp/mp.module';
 
 @Module({
   imports: [
+    // MongooseModule.forRoot('mongodb://localhost/nest'),
     ConfigModule.forRoot({
       envFilePath: ['.env.development.local', '.env'],
       isGlobal: true,
-      load: [configuration],
+      load: [configConfiguration],
     }),
     SampleModule,
     MpModule,
@@ -19,4 +21,9 @@ import { MpModule } from './mp/mp.module';
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule {}
+export class AppModule {
+  static port: number;
+  constructor(private readonly configService: ConfigService) {
+    AppModule.port = +this.configService.get('API_PORT');
+  }
+}

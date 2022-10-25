@@ -1,6 +1,7 @@
-import { VersioningType } from '@nestjs/common';
+import { Logger, VersioningType } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
+import { configSwagger } from './config';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -8,6 +9,17 @@ async function bootstrap() {
     type: VersioningType.MEDIA_TYPE,
     key: 'v=',
   });
-  await app.listen(8080);
+  configSwagger(app);
+  await app.listen(AppModule.port);
+  return AppModule;
 }
-bootstrap();
+bootstrap().then((appModule) => {
+  Logger.log(
+    `Application running on url: http://localhost:${appModule.port}`,
+    'Main',
+  );
+  Logger.log(
+    `Swagger App running on url: http://localhost:${appModule.port}/swagger`,
+    'Main',
+  );
+});
