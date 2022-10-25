@@ -1,11 +1,11 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { MongooseModule } from '@nestjs/mongoose';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { configConfiguration } from './config';
 import { SampleModule } from './sample/sample.module';
 import { MpModule } from './mp/mp.module';
+import { DatabaseModule } from './database/database.module';
 
 @Module({
   imports: [
@@ -15,6 +15,7 @@ import { MpModule } from './mp/mp.module';
       isGlobal: true,
       load: [configConfiguration],
     }),
+    DatabaseModule,
     SampleModule,
     MpModule,
   ],

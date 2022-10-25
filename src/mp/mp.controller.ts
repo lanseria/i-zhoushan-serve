@@ -1,10 +1,15 @@
-import { Controller, Get, Query } from '@nestjs/common';
+import { Body, Controller, Get, Post, Query } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import * as CryptoJs from 'crypto-js';
+import { CreateUserDto } from 'src/dto/create-user.dto';
+import { MpService } from './mp.service';
 
 @Controller('mp')
 export class MpController {
-  constructor(private readonly configService: ConfigService) {}
+  constructor(
+    private readonly configService: ConfigService,
+    private readonly mpService: MpService,
+  ) {}
 
   @Get('/check_signature')
   checkSignature(
@@ -23,5 +28,15 @@ export class MpController {
     } else {
       return false;
     }
+  }
+
+  @Post('/user')
+  createUser(@Body() createUserDto: CreateUserDto) {
+    return this.mpService.createUser(createUserDto);
+  }
+
+  @Get('/user')
+  findAllUser() {
+    return this.mpService.findAllUser();
   }
 }
