@@ -10,7 +10,7 @@ const defaultConnection = (
   )}:${config.get<string>('database.pass')}@${config.get<string>(
     'database.host',
   )}:${config.get<string>('database.port')}`;
-  Logger.log(uri, 'src/database/database.providers.ts');
+  Logger.debug(uri, 'DatabaseProviders');
   return {
     uri,
   };

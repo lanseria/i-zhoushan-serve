@@ -7,6 +7,7 @@ import {
   Query,
   Version,
 } from '@nestjs/common';
+import { SchedulerRegistry } from '@nestjs/schedule';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { CreateUserDto } from 'src/dto/create-user.dto';
 import { SampleService } from './sample.service';

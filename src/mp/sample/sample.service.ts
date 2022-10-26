@@ -8,13 +8,29 @@ import { InjectModel } from '@nestjs/mongoose';
 import { CreateUserDto } from 'src/dto/create-user.dto';
 import { ConfigService } from '@nestjs/config';
 import * as dayjs from 'dayjs';
+import { SchedulerRegistry } from '@nestjs/schedule';
+import { CronJob } from 'cron';
 
 @Injectable()
 export class SampleService {
   constructor(
     @InjectModel('User') private userModel: Model<UserDocument>,
     private configService: ConfigService,
+    private schedulerRegistry: SchedulerRegistry,
   ) {}
+  private readonly logger = new Logger(SampleService.name);
+
+  onApplicationBootstrap() {
+    this.logger.debug('启动核酸采样服务钩子');
+    const seconds = 1;
+    const job = new CronJob(`${seconds} * * * * *`, () => {
+      //todo 推送消息
+      job.stop();
+      this.schedulerRegistry.deleteCronJob('name');
+    });
+    this.schedulerRegistry.addCronJob('name', job);
+    job.start();
+  }
 
   async updateCurrentUser(createUserDto: CreateUserDto) {
     if (createUserDto.isSubscribe) {
@@ -31,7 +47,7 @@ export class SampleService {
   }
 
   async getCreateCurrentUser(code: string) {
-    Logger.log(code);
+    this.logger.debug(code);
     const res = await got.get(MP_LOGIN_sns_jscode2session, {
       searchParams: {
         appid: this.configService.get<string>('mp.appid'),
@@ -41,9 +57,9 @@ export class SampleService {
       },
     });
     // {"session_key":"H7fLpQuhbAAqyLYa7blgBw==","openid":"oab3W5S60tJPVI8PKZLs8Z_GPf6s"}
-    Logger.log(res.body);
+    this.logger.debug(res.body);
     const body = JSON.parse(res.body);
-    // Logger.log(body);
+    //  this.logger.debug(body);
     const user = await this.userModel.findOne({
       openid: body.openid,
     });
