@@ -8,4 +8,8 @@ export const configConfiguration = () => ({
     pass: process.env.DATABASE_PASSWORD,
     name: process.env.DATABASE_NAME,
   },
+  mp: {
+    appid: process.env.MP_APPID,
+    secret: process.env.MP_APPSECRET,
+  },
 });

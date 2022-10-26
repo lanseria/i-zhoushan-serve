@@ -19,3 +19,14 @@ export const SampleHeaders = {
   Referer: 'https://hsddcx.wsjkw.zj.gov.cn/webapp/app-mobile/epidMap',
   'Referrer-Policy': 'strict-origin-when-cross-origin',
 };
+/**
+ * 小程序登录
+ * https://developers.weixin.qq.com/miniprogram/dev/OpenApiDoc/user-login/code2Session.html
+ * GET https://api.weixin.qq.com/sns/jscode2session
+ * appid	string	是	小程序 appId
+ * secret	string	是	小程序 appSecret
+ * js_code	string	是	登录时获取的 code，可通过wx.login获取
+ * grant_type	string	是	授权类型，此处只需填写 authorization_code
+ */
+export const MP_LOGIN_sns_jscode2session =
+  'https://api.weixin.qq.com/sns/jscode2session';

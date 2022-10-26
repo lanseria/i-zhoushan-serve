@@ -1,4 +1,12 @@
-import { Body, Controller, Get, Post, Query, Version } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Post,
+  Put,
+  Query,
+  Version,
+} from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { CreateUserDto } from 'src/dto/create-user.dto';
 import { SampleService } from './sample.service';
@@ -11,13 +19,12 @@ export class SampleController {
   constructor(private readonly sampleService: SampleService) {}
 
   /**
-   * 核酸采样点服务跨域转发
+   * 更新当前用户
    */
-  @ApiOperation({ description: '核酸采样点服务跨域转发' })
-  @Post('/points')
-  @Version('0.1.0')
-  getSampleV1(@Body() body) {
-    return this.sampleService.getSampleV1(body);
+  @ApiOperation({ description: '更新当前用户' })
+  @Put('/user')
+  updateCurrentUser(@Body() createUserDto: CreateUserDto) {
+    return this.sampleService.updateCurrentUser(createUserDto);
   }
 
   /**
@@ -27,6 +34,16 @@ export class SampleController {
   @Get('/user')
   getCreateCurrentUser(@Query('code') code: string) {
     return this.sampleService.getCreateCurrentUser(code);
+  }
+
+  /**
+   * 核酸采样点服务跨域转发
+   */
+  @ApiOperation({ description: '核酸采样点服务跨域转发' })
+  @Post('/points')
+  @Version('0.1.0')
+  getSampleV1(@Body() body) {
+    return this.sampleService.getSampleV1(body);
   }
 
   /**
