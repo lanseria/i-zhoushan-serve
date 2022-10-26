@@ -1,16 +1,20 @@
-import { Body, Controller, Get, Post, Query } from '@nestjs/common';
+import { Controller, Get, Query } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import * as CryptoJs from 'crypto-js';
-import { CreateUserDto } from 'src/dto/create-user.dto';
 import { MpService } from './mp.service';
 
+@ApiTags('小程序端')
 @Controller('mp')
 export class MpController {
   constructor(
     private readonly configService: ConfigService,
     private readonly mpService: MpService,
   ) {}
-
+  /**
+   * 订阅服务器校验
+   */
+  @ApiOperation({ description: '订阅服务器校验' })
   @Get('/check_signature')
   checkSignature(
     @Query('signature') signature,
@@ -22,21 +26,10 @@ export class MpController {
     const tmpArr = CryptoJs.SHA1(
       [mpToken, timestamp, nonce].sort().join(''),
     ).toString();
-    console.log(signature, timestamp, nonce, mpToken, tmpArr);
     if (tmpArr === signature) {
       return echostr;
     } else {
       return false;
     }
-  }
-
-  @Post('/user')
-  createUser(@Body() createUserDto: CreateUserDto) {
-    return this.mpService.createUser(createUserDto);
-  }
-
-  @Get('/user')
-  findAllUser() {
-    return this.mpService.findAllUser();
   }
 }

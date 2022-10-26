@@ -9,16 +9,16 @@ export type UserDocument = User & Document;
   },
 })
 export class User extends Document {
-  @Prop({ required: true, type: String })
+  @Prop({ required: true, type: String, unique: true })
   openid: string;
 
   @Prop({ required: true, type: Boolean })
   isSubscribe: boolean;
 
-  @Prop({ required: true, type: Number })
+  @Prop({ type: Number })
   createdAt: number;
 
-  @Prop({ required: true, type: Number })
+  @Prop({ type: Number })
   updatedAt: number;
 
   @Prop({ required: true, type: Number })

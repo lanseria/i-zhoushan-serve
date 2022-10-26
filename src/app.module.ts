@@ -3,7 +3,6 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { configConfiguration } from './config';
-import { SampleModule } from './sample/sample.module';
 import { MpModule } from './mp/mp.module';
 import { DatabaseModule } from './database/database.module';
 
@@ -16,7 +15,6 @@ import { DatabaseModule } from './database/database.module';
       load: [configConfiguration],
     }),
     DatabaseModule,
-    SampleModule,
     MpModule,
   ],
   controllers: [AppController],
