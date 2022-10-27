@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { CacheModule, Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { ScheduleModule } from '@nestjs/schedule';
 import { AppController } from './app.controller';
@@ -17,6 +17,7 @@ import { DatabaseModule } from './database/database.module';
     }),
     ScheduleModule.forRoot(),
     DatabaseModule,
+    CacheModule.register(),
     MpModule,
   ],
   controllers: [AppController],

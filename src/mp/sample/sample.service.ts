@@ -1,9 +1,9 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { CACHE_MANAGER, Inject, Injectable, Logger } from '@nestjs/common';
 import got from 'got';
 import { decodeStr, encodeStr } from './utils';
 import {
   MP_LOGIN_sns_jscode2session,
-  SampleHeaders,
+  SAMPLEHEADERS,
   SAMPLE_SUBSCRIBE_TEMPLATE_ID,
 } from './const';
 import { Model } from 'mongoose';
@@ -15,11 +15,13 @@ import * as dayjs from 'dayjs';
 import { SchedulerRegistry } from '@nestjs/schedule';
 import { CronJob } from 'cron';
 import { MpService } from '../mp.service';
+import { Cache } from 'cache-manager';
 
 @Injectable()
 export class SampleService {
   constructor(
     @InjectModel('User') private userModel: Model<UserDocument>,
+    @Inject(CACHE_MANAGER) private cacheManager: Cache,
     private configService: ConfigService,
     private schedulerRegistry: SchedulerRegistry,
     private mpService: MpService,
@@ -29,11 +31,15 @@ export class SampleService {
 
   async onApplicationBootstrap() {
     this.logger.debug('启动核酸采样服务钩子');
-    this.logger.debug('获取所有开启订阅的用户');
+    this.freshUserSubscribe();
+  }
+
+  async freshUserSubscribe() {
+    this.logger.debug('获取/刷新所有开启订阅的用户');
     const users = await this.userModel.find({ isSubscribe: true });
     users.map((user) => {
       const nextDate = dayjs.unix(user.nextSampleDateTime).toDate();
-      this.logger.debug(nextDate);
+      // this.logger.debug(nextDate);
       const job = new CronJob(nextDate, () => {
         //todo 推送消息
         this.subscribeSampleSend(user.openid);
@@ -45,6 +51,20 @@ export class SampleService {
       });
       this.schedulerRegistry.addCronJob(user.openid, job);
       job.start();
+    });
+    this.getCrons();
+  }
+
+  getCrons() {
+    const jobs = this.schedulerRegistry.getCronJobs();
+    jobs.forEach((value, key, map) => {
+      let next;
+      try {
+        next = value.nextDates().toJSDate();
+      } catch (e) {
+        next = 'error: next fire date is in the past!';
+      }
+      this.logger.debug(`job: ${key} -> next: ${next}`);
     });
   }
 
@@ -83,7 +103,7 @@ export class SampleService {
   }
 
   async getCreateCurrentUser(code: string) {
-    this.logger.debug(code);
+    this.logger.debug('code: ' + code);
     const res = await got.get(MP_LOGIN_sns_jscode2session, {
       searchParams: {
         appid: this.configService.get<string>('mp.appid'),
@@ -93,7 +113,7 @@ export class SampleService {
       },
     });
     // {"session_key":"H7fLpQuhbAAqyLYa7blgBw==","openid":"oab3W5S60tJPVI8PKZLs8Z_GPf6s"}
-    this.logger.debug(res.body);
+    this.logger.debug('login data: ' + res.body);
     const body = JSON.parse(res.body);
     //  this.logger.debug(body);
     const user = await this.userModel.findOne({
@@ -115,15 +135,21 @@ export class SampleService {
 
   async getSampleV1(paramData: any) {
     const body = encodeStr(paramData);
-    const res = await got.post(
-      'https://hsddcx.wsjkw.zj.gov.cn/client-api/search/getNucleicAcidOrgList',
-      {
-        body,
-        headers: SampleHeaders,
-      },
-    );
-    const decodeBody = decodeStr(res.body);
-    return decodeBody;
+    const value = await this.cacheManager.get(body);
+    if (value) {
+      return value;
+    } else {
+      const res = await got.post(
+        'https://hsddcx.wsjkw.zj.gov.cn/client-api/search/getNucleicAcidOrgList',
+        {
+          body,
+          headers: SAMPLEHEADERS,
+        },
+      );
+      const decodeBody = decodeStr(res.body);
+      await this.cacheManager.set(body, decodeBody);
+      return decodeBody;
+    }
   }
 
   async createUser(createUserDto: CreateUserDto): Promise<User> {
