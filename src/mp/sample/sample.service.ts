@@ -80,6 +80,7 @@ export class SampleService {
     const access_token = await this.mpService.token();
     const user = await this.userModel.findOne({ openid });
     const nextDate = dayjs.unix(user.nextSampleDateTime).format('YYYY-MM-DD');
+    this.logger.debug(nextDate);
     const data = {
       'time2.DATA': {
         value: nextDate,
