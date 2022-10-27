@@ -88,7 +88,7 @@ export class SampleService {
         value: nextDate,
       },
       thing3: {
-        value: '请进入小程序后继续点击确认订阅来再次获取核酸提醒',
+        value: '请进入小程序确认订阅来再次获取核酸提醒',
       },
     };
     this.mpService.subscribeMessageSend(
