@@ -11,7 +11,7 @@ import { DatabaseModule } from './database/database.module';
   imports: [
     // MongooseModule.forRoot('mongodb://localhost/nest'),
     ConfigModule.forRoot({
-      envFilePath: ['.env.development.local', '.env'],
+      envFilePath: ['.env.production.local', '.env.development.local', '.env'],
       isGlobal: true,
       load: [configConfiguration],
     }),
