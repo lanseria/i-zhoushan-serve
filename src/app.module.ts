@@ -17,7 +17,9 @@ import { DatabaseModule } from './database/database.module';
     }),
     ScheduleModule.forRoot(),
     DatabaseModule,
-    CacheModule.register(),
+    CacheModule.register({
+      isGlobal: true,
+    }),
     MpModule,
   ],
   controllers: [AppController],
