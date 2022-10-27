@@ -99,6 +99,7 @@ export class SampleService {
       { openid: createUserDto.openid },
       createUserDto,
     );
+    this.freshUserSubscribe();
     return user;
   }
 
