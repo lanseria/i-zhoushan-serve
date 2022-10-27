@@ -22,6 +22,7 @@ export class MpService {
     access_token: string,
     touser: string,
     template_id: string,
+    page: string,
     data: any,
   ) {
     const res = await got.post(MP_SUBSCRIBE_message_subscribe_send, {
@@ -31,6 +32,7 @@ export class MpService {
       json: {
         touser,
         template_id,
+        page,
         data,
       },
     });

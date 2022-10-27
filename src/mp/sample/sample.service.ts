@@ -82,6 +82,10 @@ export class SampleService {
     const nextDate = dayjs
       .unix(user.nextSampleDateTime)
       .format('YYYY年MM月DD日 HH:mm');
+    const predictNextDate = dayjs
+      .unix(user.nextSampleDateTime)
+      .add(3, 'day')
+      .unix();
     this.logger.debug(nextDate);
     const data = {
       time2: {
@@ -95,6 +99,7 @@ export class SampleService {
       access_token,
       openid,
       SAMPLE_SUBSCRIBE_TEMPLATE_ID,
+      'index/index?predictNextDate=' + predictNextDate,
       data,
     );
   }
