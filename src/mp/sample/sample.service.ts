@@ -35,6 +35,7 @@ export class SampleService {
   }
 
   async freshUserSubscribe() {
+    this.removeAllCrons();
     this.logger.debug('获取/刷新所有开启订阅的用户');
     const users = await this.userModel.find({ isSubscribe: true });
     users.map((user) => {
@@ -53,6 +54,13 @@ export class SampleService {
       job.start();
     });
     this.getCrons();
+  }
+
+  removeAllCrons() {
+    const jobs = this.schedulerRegistry.getCronJobs();
+    jobs.forEach((value, key, map) => {
+      this.schedulerRegistry.deleteCronJob(key);
+    });
   }
 
   getCrons() {
