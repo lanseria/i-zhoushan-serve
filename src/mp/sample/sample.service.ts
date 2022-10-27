@@ -99,7 +99,7 @@ export class SampleService {
       access_token,
       openid,
       SAMPLE_SUBSCRIBE_TEMPLATE_ID,
-      'index/index?predictNextDate=' + predictNextDate,
+      'pages/index/index?predictNextDate=' + predictNextDate,
       data,
     );
   }
