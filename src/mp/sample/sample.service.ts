@@ -1,7 +1,11 @@
 import { Injectable, Logger } from '@nestjs/common';
 import got from 'got';
 import { decodeStr, encodeStr } from './utils';
-import { MP_LOGIN_sns_jscode2session, SampleHeaders } from './const';
+import {
+  MP_LOGIN_sns_jscode2session,
+  SampleHeaders,
+  SAMPLE_SUBSCRIBE_TEMPLATE_ID,
+} from './const';
 import { Model } from 'mongoose';
 import { User, UserDocument } from 'src/schemas/user.schema';
 import { InjectModel } from '@nestjs/mongoose';
@@ -10,6 +14,7 @@ import { ConfigService } from '@nestjs/config';
 import * as dayjs from 'dayjs';
 import { SchedulerRegistry } from '@nestjs/schedule';
 import { CronJob } from 'cron';
+import { MpService } from '../mp.service';
 
 @Injectable()
 export class SampleService {
@@ -17,19 +22,50 @@ export class SampleService {
     @InjectModel('User') private userModel: Model<UserDocument>,
     private configService: ConfigService,
     private schedulerRegistry: SchedulerRegistry,
+    private mpService: MpService,
   ) {}
+
   private readonly logger = new Logger(SampleService.name);
 
-  onApplicationBootstrap() {
+  async onApplicationBootstrap() {
     this.logger.debug('启动核酸采样服务钩子');
-    const seconds = 1;
-    const job = new CronJob(`${seconds} * * * * *`, () => {
-      //todo 推送消息
-      job.stop();
-      this.schedulerRegistry.deleteCronJob('name');
+    this.logger.debug('获取所有开启订阅的用户');
+    const users = await this.userModel.find({ isSubscribe: true });
+    users.map((user) => {
+      const nextDate = dayjs.unix(user.nextSampleDateTime).toDate();
+      this.logger.debug(nextDate);
+      const job = new CronJob(nextDate, () => {
+        //todo 推送消息
+        this.subscribeSampleSend(user.openid);
+        job.stop();
+        this.schedulerRegistry.deleteCronJob(user.openid);
+        // 设置为未订阅
+        user.isSubscribe = false;
+        user.save();
+      });
+      this.schedulerRegistry.addCronJob(user.openid, job);
+      job.start();
     });
-    this.schedulerRegistry.addCronJob('name', job);
-    job.start();
+  }
+
+  async subscribeSampleSend(openid: string) {
+    const access_token = await this.mpService.token();
+    const user = await this.userModel.findOne({ openid });
+    const nextDate = dayjs.unix(user.nextSampleDateTime).format('YYYY-MM-DD');
+    const data = {
+      'time2.DATA': {
+        value: nextDate,
+      },
+      'thing3.DATA': {
+        value: '请进入小程序后继续点击确认订阅来再次获取核酸提醒',
+      },
+    };
+    this.mpService.subscribeMessageSend(
+      access_token,
+      openid,
+      SAMPLE_SUBSCRIBE_TEMPLATE_ID,
+      data,
+    );
   }
 
   async updateCurrentUser(createUserDto: CreateUserDto) {

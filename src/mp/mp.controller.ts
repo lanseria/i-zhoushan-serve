@@ -22,14 +22,6 @@ export class MpController {
     @Query('nonce') nonce,
     @Query('echostr') echostr,
   ) {
-    const mpToken = this.configService.get<string>('MP_TOKEN');
-    const tmpArr = CryptoJs.SHA1(
-      [mpToken, timestamp, nonce].sort().join(''),
-    ).toString();
-    if (tmpArr === signature) {
-      return echostr;
-    } else {
-      return false;
-    }
+    return this.mpService.checkSignature(signature, timestamp, nonce, echostr);
   }
 }
