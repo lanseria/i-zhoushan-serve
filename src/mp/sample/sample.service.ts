@@ -79,7 +79,9 @@ export class SampleService {
   async subscribeSampleSend(openid: string) {
     const access_token = await this.mpService.token();
     const user = await this.userModel.findOne({ openid });
-    const nextDate = dayjs.unix(user.nextSampleDateTime).format('YYYY-MM-DD');
+    const nextDate = dayjs
+      .unix(user.nextSampleDateTime)
+      .format('YYYY年MM月DD日 HH:mm');
     this.logger.debug(nextDate);
     const data = {
       'time2.DATA': {
