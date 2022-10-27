@@ -84,10 +84,10 @@ export class SampleService {
       .format('YYYY年MM月DD日 HH:mm');
     this.logger.debug(nextDate);
     const data = {
-      'time2.DATA': {
+      time2: {
         value: nextDate,
       },
-      'thing3.DATA': {
+      thing3: {
         value: '请进入小程序后继续点击确认订阅来再次获取核酸提醒',
       },
     };
