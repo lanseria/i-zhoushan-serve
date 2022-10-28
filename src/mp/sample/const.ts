@@ -32,7 +32,10 @@ export const SAMPLE_SUBSCRIBE_TEMPLATE_ID =
  */
 export const MP_LOGIN_sns_jscode2session =
   'https://api.weixin.qq.com/sns/jscode2session';
-
+export interface MpLoginDto {
+  session_key: string;
+  openid: string;
+}
 /**
  * 接口调用凭证 /getAccessToken
  * auth.getAccessToken
@@ -41,7 +44,10 @@ export const MP_LOGIN_sns_jscode2session =
  * secret	string		是	小程序唯一凭证密钥，即 AppSecret，获取方式同 appid
  */
 export const MP_TOKEN_token = 'https://api.weixin.qq.com/cgi-bin/token';
-
+export interface MpTokenDto {
+  access_token: string;
+  expires_in: string;
+}
 /**
  * 订阅消息 /send
  * POST https://api.weixin.qq.com/cgi-bin/message/subscribe/send?access_token=ACCESS_TOKEN
@@ -55,3 +61,8 @@ export const MP_TOKEN_token = 'https://api.weixin.qq.com/cgi-bin/token';
  */
 export const MP_SUBSCRIBE_message_subscribe_send =
   'https://api.weixin.qq.com/cgi-bin/message/subscribe/send';
+export interface MpSubscribeMessageDto {
+  errcode: number;
+  merrmsg: string;
+  msgid: number;
+}

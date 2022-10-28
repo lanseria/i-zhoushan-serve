@@ -3,6 +3,10 @@ import { ConfigService } from '@nestjs/config';
 import * as CryptoJs from 'crypto-js';
 import got from 'got';
 import {
+  MpLoginDto,
+  MpSubscribeMessageDto,
+  MpTokenDto,
+  MP_LOGIN_sns_jscode2session,
   MP_SUBSCRIBE_message_subscribe_send,
   MP_TOKEN_token,
 } from './sample/const';
@@ -36,12 +40,27 @@ export class MpService {
         data,
       },
     });
-    this.logger.debug(res.body);
-    const body = JSON.parse(res.body);
+    this.logger.debug('subscribe message: ' + res.body);
+    const body: MpSubscribeMessageDto = JSON.parse(res.body);
     return body;
   }
 
-  async token(): Promise<string> {
+  async login(code: string): Promise<MpLoginDto> {
+    this.logger.debug('login code: ' + code);
+    const res = await got.get(MP_LOGIN_sns_jscode2session, {
+      searchParams: {
+        appid: this.configService.get<string>('mp.appid'),
+        secret: this.configService.get<string>('mp.secret'),
+        js_code: code,
+        grant_type: 'authorization_code',
+      },
+    });
+    this.logger.debug('login data: ' + res.body);
+    const body: MpLoginDto = JSON.parse(res.body);
+    return body;
+  }
+
+  async token(): Promise<MpTokenDto> {
     const res = await got.get(MP_TOKEN_token, {
       searchParams: {
         appid: this.configService.get<string>('mp.appid'),
@@ -49,9 +68,9 @@ export class MpService {
         grant_type: 'client_credential',
       },
     });
-    this.logger.debug(res.body);
-    const body = JSON.parse(res.body);
-    return body.access_token;
+    this.logger.debug('access_token:' + res.body);
+    const body: MpTokenDto = JSON.parse(res.body);
+    return body;
   }
 
   checkSignature(signature: any, timestamp: any, nonce: any, echostr: any) {

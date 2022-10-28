@@ -1,6 +1,10 @@
 import { IV, WordArray } from './const';
 import * as CryptoJS from 'crypto-js';
-
+/**
+ * 加密
+ * @param paramData 未加密数据
+ * @returns 加密数据
+ */
 export const encodeStr = (paramData: any) => {
   const w = CryptoJS.enc.Utf8.parse(WordArray);
   const O = CryptoJS.enc.Hex.parse(IV);
@@ -11,7 +15,11 @@ export const encodeStr = (paramData: any) => {
   }).toString();
   return body;
 };
-
+/**
+ * 解密
+ * @param data 加密数据
+ * @returns 解密数据
+ */
 export const decodeStr = (data: string) => {
   const w = CryptoJS.enc.Utf8.parse(WordArray);
   const T = CryptoJS.enc.Hex.parse(IV);

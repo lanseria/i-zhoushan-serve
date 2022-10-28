@@ -1,16 +1,11 @@
 import { CACHE_MANAGER, Inject, Injectable, Logger } from '@nestjs/common';
 import got from 'got';
 import { decodeStr, encodeStr } from './utils';
-import {
-  MP_LOGIN_sns_jscode2session,
-  SAMPLEHEADERS,
-  SAMPLE_SUBSCRIBE_TEMPLATE_ID,
-} from './const';
+import { SAMPLEHEADERS, SAMPLE_SUBSCRIBE_TEMPLATE_ID } from './const';
 import { Model } from 'mongoose';
 import { User, UserDocument } from 'src/schemas/user.schema';
 import { InjectModel } from '@nestjs/mongoose';
 import { CreateUserDto } from 'src/dto/create-user.dto';
-import { ConfigService } from '@nestjs/config';
 import * as dayjs from 'dayjs';
 import { SchedulerRegistry } from '@nestjs/schedule';
 import { CronJob } from 'cron';
@@ -22,7 +17,6 @@ export class SampleService {
   constructor(
     @InjectModel('User') private userModel: Model<UserDocument>,
     @Inject(CACHE_MANAGER) private cacheManager: Cache,
-    private configService: ConfigService,
     private schedulerRegistry: SchedulerRegistry,
     private mpService: MpService,
   ) {}
@@ -33,16 +27,16 @@ export class SampleService {
     this.logger.debug('启动核酸采样服务钩子');
     this.freshUserSubscribe();
   }
-
+  /**
+   * 刷新用户订阅服务
+   */
   async freshUserSubscribe() {
     this.removeAllCrons();
     this.logger.debug('获取/刷新所有开启订阅的用户');
     const users = await this.userModel.find({ isSubscribe: true });
     users.map((user) => {
       const nextDate = dayjs.unix(user.nextSampleDateTime).toDate();
-      // this.logger.debug(nextDate);
       const job = new CronJob(nextDate, () => {
-        //todo 推送消息
         this.subscribeSampleSend(user.openid);
         job.stop();
         this.schedulerRegistry.deleteCronJob(user.openid);
@@ -55,14 +49,18 @@ export class SampleService {
     });
     this.getCrons();
   }
-
+  /**
+   * 移除全部定时任务
+   */
   removeAllCrons() {
     const jobs = this.schedulerRegistry.getCronJobs();
     jobs.forEach((value, key, map) => {
       this.schedulerRegistry.deleteCronJob(key);
     });
   }
-
+  /**
+   * 获取全部定时任务
+   */
   getCrons() {
     const jobs = this.schedulerRegistry.getCronJobs();
     jobs.forEach((value, key, map) => {
@@ -75,9 +73,12 @@ export class SampleService {
       this.logger.debug(`job: ${key} -> next: ${next}`);
     });
   }
-
+  /**
+   * 发送核酸采样到期提醒订阅
+   * @param openid 用户openid
+   */
   async subscribeSampleSend(openid: string) {
-    const access_token = await this.mpService.token();
+    const { access_token } = await this.mpService.token();
     const user = await this.userModel.findOne({ openid });
     const nextDate = dayjs
       .unix(user.nextSampleDateTime)
@@ -86,7 +87,7 @@ export class SampleService {
       .unix(user.nextSampleDateTime)
       .add(3, 'day')
       .unix();
-    this.logger.debug(nextDate);
+    this.logger.debug('openid: ' + openid + 'nextDate: ' + nextDate);
     const data = {
       time2: {
         value: nextDate,
@@ -103,7 +104,11 @@ export class SampleService {
       data,
     );
   }
-
+  /**
+   * 更新当前用户信息
+   * @param createUserDto 用户DTO
+   * @returns 用户DTO
+   */
   async updateCurrentUser(createUserDto: CreateUserDto) {
     if (createUserDto.isSubscribe) {
       createUserDto.nextSampleDateTime = dayjs
@@ -118,21 +123,13 @@ export class SampleService {
     this.freshUserSubscribe();
     return user;
   }
-
+  /**
+   * 获取并创建用户
+   * @param code 用户Code
+   * @returns 用户DTO
+   */
   async getCreateCurrentUser(code: string) {
-    this.logger.debug('code: ' + code);
-    const res = await got.get(MP_LOGIN_sns_jscode2session, {
-      searchParams: {
-        appid: this.configService.get<string>('mp.appid'),
-        secret: this.configService.get<string>('mp.secret'),
-        js_code: code,
-        grant_type: 'authorization_code',
-      },
-    });
-    // {"session_key":"H7fLpQuhbAAqyLYa7blgBw==","openid":"oab3W5S60tJPVI8PKZLs8Z_GPf6s"}
-    this.logger.debug('login data: ' + res.body);
-    const body = JSON.parse(res.body);
-    //  this.logger.debug(body);
+    const body = await this.mpService.login(code);
     const user = await this.userModel.findOne({
       openid: body.openid,
     });
@@ -149,7 +146,11 @@ export class SampleService {
       return createdUser.save();
     }
   }
-
+  /**
+   * 转发代理核酸采样点
+   * @param paramData 用户地理位置信息
+   * @returns 核酸采样点
+   */
   async getSampleV1(paramData: any) {
     const body = encodeStr(paramData);
     const value = await this.cacheManager.get(body);
