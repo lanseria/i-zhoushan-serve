@@ -6,6 +6,7 @@ import { AppService } from './app.service';
 import { configConfiguration } from './config';
 import { MpModule } from './mp/mp.module';
 import { DatabaseModule } from './database/database.module';
+import { PcModule } from './pc/pc.module';
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { DatabaseModule } from './database/database.module';
       isGlobal: true,
     }),
     MpModule,
+    PcModule,
   ],
   controllers: [AppController],
   providers: [AppService],

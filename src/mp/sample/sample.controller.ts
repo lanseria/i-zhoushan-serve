@@ -7,7 +7,6 @@ import {
   Query,
   Version,
 } from '@nestjs/common';
-import { SchedulerRegistry } from '@nestjs/schedule';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { CreateUserDto } from 'src/dto/create-user.dto';
 import { SampleService } from './sample.service';
@@ -45,15 +44,6 @@ export class SampleController {
   @Version('0.1.0')
   getSampleV1(@Body() body) {
     return this.sampleService.getSampleV1(body);
-  }
-
-  /**
-   * 新建用户
-   */
-  @ApiOperation({ description: '新建用户' })
-  @Post('/user')
-  createUser(@Body() createUserDto: CreateUserDto) {
-    return this.sampleService.createUser(createUserDto);
   }
 
   /**
