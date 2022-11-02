@@ -2,6 +2,8 @@ import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import * as CryptoJs from 'crypto-js';
 import got from 'got';
+import { BufferedFile } from 'src/dto/file.dto';
+import { FileService } from 'src/file/file.service';
 import {
   MpLoginDto,
   MpSubscribeMessageDto,
@@ -13,9 +15,29 @@ import {
 
 @Injectable()
 export class MpService {
-  constructor(private readonly configService: ConfigService) {}
+  constructor(
+    private readonly fileService: FileService,
+    private readonly configService: ConfigService,
+  ) {}
 
   private readonly logger = new Logger(MpService.name);
+  /**
+   * 上传图片
+   * @param imageFile 文件二进制
+   */
+  async uploadImage(imageFile: BufferedFile) {
+    const uploadImgUrl = await this.fileService.uploadFile(imageFile, [
+      'jpeg',
+      'jpg',
+      'png',
+      'gif',
+      'webp',
+    ]);
+    return {
+      image_url: uploadImgUrl.url,
+      message: 'success',
+    };
+  }
   /**
    * access_token 接口调用凭证
    * touser string openid
@@ -74,7 +96,7 @@ export class MpService {
   }
 
   checkSignature(signature: any, timestamp: any, nonce: any, echostr: any) {
-    const mpToken = this.configService.get<string>('MP_TOKEN');
+    const mpToken = this.configService.get<string>('mp.token');
     const tmpArr = CryptoJs.SHA1(
       [mpToken, timestamp, nonce].sort().join(''),
     ).toString();

@@ -1,8 +1,11 @@
 import { Controller, Get } from '@nestjs/common';
-import { ApiOperation } from '@nestjs/swagger';
+import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { SampleService } from './sample.service';
 
-@Controller('pc/sample')
+@ApiTags('PC端', '核酸采样服务')
+@Controller({
+  path: 'pc/sample',
+})
 export class SampleController {
   constructor(private readonly sampleService: SampleService) {}
   /**

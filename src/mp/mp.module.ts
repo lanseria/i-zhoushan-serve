@@ -3,9 +3,10 @@ import { MpController } from './mp.controller';
 import { MpService } from './mp.service';
 import { SampleModule } from './sample/sample.module';
 import { ParkingModule } from './parking/parking.module';
+import { FileModule } from 'src/file/file.module';
 
 @Module({
-  imports: [SampleModule, ParkingModule],
+  imports: [SampleModule, ParkingModule, FileModule],
   controllers: [MpController],
   providers: [MpService],
 })

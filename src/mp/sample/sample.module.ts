@@ -1,12 +1,10 @@
-import { CacheModule, Module } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { User, UserSchema } from 'src/schemas/user.schema';
 import { MpService } from '../mp.service';
 import { SampleController } from './sample.controller';
 import { SampleService } from './sample.service';
-import type { ClientOpts } from 'redis';
-import { ConfigModule, ConfigService } from '@nestjs/config';
-import { redisStore } from 'cache-manager-redis-store';
+import { FileModule } from 'src/file/file.module';
 
 @Module({
   imports: [
@@ -16,6 +14,7 @@ import { redisStore } from 'cache-manager-redis-store';
         schema: UserSchema,
       },
     ]),
+    FileModule,
   ],
   controllers: [SampleController],
   providers: [SampleService, MpService],

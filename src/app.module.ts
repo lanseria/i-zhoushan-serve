@@ -7,6 +7,7 @@ import { configConfiguration } from './config';
 import { MpModule } from './mp/mp.module';
 import { DatabaseModule } from './database/database.module';
 import { PcModule } from './pc/pc.module';
+import { FileModule } from './file/file.module';
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import { PcModule } from './pc/pc.module';
     }),
     MpModule,
     PcModule,
+    FileModule,
   ],
   controllers: [AppController],
   providers: [AppService],
@@ -30,6 +32,6 @@ import { PcModule } from './pc/pc.module';
 export class AppModule {
   static port: number;
   constructor(private readonly configService: ConfigService) {
-    AppModule.port = +this.configService.get('API_PORT');
+    AppModule.port = +this.configService.get<string>('api.port');
   }
 }

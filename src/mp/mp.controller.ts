@@ -1,16 +1,44 @@
-import { Controller, Get, Query } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
-import { ApiOperation, ApiTags } from '@nestjs/swagger';
-import * as CryptoJs from 'crypto-js';
+import {
+  Controller,
+  Get,
+  Post,
+  Query,
+  UploadedFile,
+  UseInterceptors,
+} from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { ApiBody, ApiConsumes, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { BufferedFile } from 'src/dto/file.dto';
 import { MpService } from './mp.service';
 
 @ApiTags('小程序端')
 @Controller('mp')
 export class MpController {
-  constructor(
-    private readonly configService: ConfigService,
-    private readonly mpService: MpService,
-  ) {}
+  constructor(private readonly mpService: MpService) {}
+  /**
+   * 上传图片
+   * @param image 图片二进制
+   * @returns
+   */
+  @ApiOperation({ description: '图片文件上传' })
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        image: {
+          type: 'string',
+          format: 'binary',
+        },
+      },
+    },
+  })
+  @Post('/upload/image')
+  @UseInterceptors(FileInterceptor('image'))
+  uploadImage(@UploadedFile() imageFile: BufferedFile) {
+    return this.mpService.uploadImage(imageFile);
+  }
+
   /**
    * 订阅服务器校验
    */
