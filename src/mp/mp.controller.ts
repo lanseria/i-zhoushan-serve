@@ -11,7 +11,7 @@ import { ApiBody, ApiConsumes, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { BufferedFile } from 'src/dto/file.dto';
 import { MpService } from './mp.service';
 
-@ApiTags('小程序端')
+@ApiTags('公共服务', '小程序端')
 @Controller('mp')
 export class MpController {
   constructor(private readonly mpService: MpService) {}
