@@ -24,7 +24,7 @@ export const configConfiguration = () => {
     minio: {
       url: process.env.MINIO_ENDPOINT,
       host: process.env.MINIO_HOST,
-      port: process.env.MINIO_PORT,
+      port: parseInt(process.env.MINIO_HOST, 10) || 9000,
       user: process.env.MINIO_ACCESSKEY,
       pass: process.env.MINIO_SECRETKEY,
       bucket: process.env.MINIO_BUCKET,

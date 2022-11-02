@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Logger, Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MinioModule } from 'nestjs-minio-client';
 import { FileService } from './file.service';
@@ -15,7 +15,7 @@ import { FileService } from './file.service';
           accessKey: configService.get<string>('minio.user'),
           secretKey: configService.get<string>('minio.pass'),
         };
-        console.log(cfg);
+        Logger.debug(JSON.stringify(cfg), 'FileModule');
         return cfg;
       },
       inject: [ConfigService],

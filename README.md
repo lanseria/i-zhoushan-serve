@@ -56,3 +56,9 @@ https://enjqkboeqf.feishu.cn/docx/J8sIdaLd0okGDMxexRrc2Tgvn5b#YGm0dGmMIo0eYIxW2R
 ```
 docker run --name izhoushan-ui -itd -v /home/dell/deploy/i-zhoushan-pc:/usr/share/nginx/html -v /home/dell/deploy/i-zhoushan-serve/nginx/conf.d/default.conf:/etc/nginx/conf.d/default.conf -v /home/dell/deploy/i-zhoushan-serve/nginx/nginx.conf:/etc/nginx/nginx.conf -p 8080:8000 --link minio --link izhoushan-serve --restart always nginx
 ```
+
+## 启动nestjs服务
+
+```
+docker run -itd --name izhoushan-serve -e TZ=Asia/Shanghai --link mongo-db:mongo-db --link minio:minio -v /home/dell/i-zhoushan-serve:/usr/src/myapp -w /usr/src/myapp -p 8080:8080 --restart always node:16.17.0 npm run start:prod
+```
