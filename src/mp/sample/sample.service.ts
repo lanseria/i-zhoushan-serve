@@ -153,10 +153,12 @@ export class SampleService {
    */
   async getSampleV1(paramData: any) {
     const body = encodeStr(paramData);
-    const value = await this.cacheManager.get(body);
-    if (value) {
-      return value;
+    this.logger.debug('client send: ' + body);
+    let encodeValue: string = await this.cacheManager.get(body);
+    if (encodeValue) {
+      this.logger.debug('use cache');
     } else {
+      this.logger.debug('use realtime');
       const res = await got.post(
         'https://hsddcx.wsjkw.zj.gov.cn/client-api/search/getNucleicAcidOrgList',
         {
@@ -164,10 +166,12 @@ export class SampleService {
           headers: SAMPLEHEADERS,
         },
       );
-      const decodeBody = decodeStr(res.body);
-      await this.cacheManager.set(body, decodeBody);
-      return decodeBody;
+      await this.cacheManager.set(body, res.body, 1800 * 1000);
+      encodeValue = res.body;
+      // this.logger.debug('use realtime: ' + encodeValue);
     }
+    const decodeBody = decodeStr(encodeValue);
+    return decodeBody;
   }
 
   async createUser(createUserDto: CreateUserDto): Promise<User> {
