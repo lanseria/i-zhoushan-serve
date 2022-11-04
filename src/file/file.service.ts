@@ -3,6 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import { MinioService } from 'nestjs-minio-client';
 import { BufferedFile } from 'src/dto/file.dto';
 import * as CryptoJs from 'crypto-js';
+import { FileResponseDto } from 'src/common/dtos';
 
 @Injectable()
 export class FileService {
@@ -16,6 +17,32 @@ export class FileService {
 
   public get minioClient() {
     return this.minioService.client;
+  }
+
+  public getFilesAndCount(
+    pagination,
+  ): Promise<[projectEntities: FileResponseDto[], totalFiles: number]> {
+    // eslint-disable-next-line prefer-const
+    let { skip, limit: take } = pagination;
+    return new Promise((resolve, reject) => {
+      const fileList: FileResponseDto[] = [];
+      const stream = this.minioClient.listObjects(this.bucketName);
+      let total = 0;
+      stream.on('data', function (obj) {
+        total++;
+        if (skip) {
+          skip--;
+        } else if (fileList.length <= take) {
+          fileList.push(obj);
+        }
+      });
+      stream.on('error', function (err) {
+        reject(err);
+      });
+      stream.on('end', function () {
+        resolve([fileList, total]);
+      });
+    });
   }
 
   public async uploadFile(file: BufferedFile, mimetypes: string[] = []) {
@@ -83,8 +110,8 @@ export class FileService {
   }
 
   getFileUrl(objectName: string) {
-    return `https://${this.configService.get<string>(
-      'minio.url',
-    )}/${this.configService.get<string>('minio.bucket')}/${objectName}`;
+    return `https://${this.configService.get<string>('minio.url')}/${
+      this.bucketName
+    }/${objectName}`;
   }
 }

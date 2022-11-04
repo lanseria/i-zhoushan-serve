@@ -3,7 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import * as CryptoJs from 'crypto-js';
 import got from 'got';
 import { BufferedFile } from 'src/dto/file.dto';
-import { FileService } from 'src/file/file.service';
+import { FileService as MinioFileService } from 'src/file/file.service';
 import {
   MpLoginDto,
   MpSubscribeMessageDto,
@@ -16,7 +16,7 @@ import {
 @Injectable()
 export class MpService {
   constructor(
-    private readonly fileService: FileService,
+    private readonly minioFileService: MinioFileService,
     private readonly configService: ConfigService,
   ) {}
 
@@ -26,7 +26,7 @@ export class MpService {
    * @param imageFile 文件二进制
    */
   async uploadImage(imageFile: BufferedFile) {
-    const uploadImgUrl = await this.fileService.uploadFile(imageFile, [
+    const uploadImgUrl = await this.minioFileService.uploadFile(imageFile, [
       'jpeg',
       'jpg',
       'png',

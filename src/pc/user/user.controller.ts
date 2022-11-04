@@ -6,19 +6,19 @@ import { ApiTags } from '@nestjs/swagger';
   path: 'pc/user',
 })
 export class UserController {
-  @Post('/login')
+  @Post('login')
   async login() {
     return {
       token: '12345',
     };
   }
 
-  @Post('/logout')
+  @Post('logout')
   async logout() {
     return {};
   }
 
-  @Post('/info')
+  @Post('info')
   async info() {
     return {
       name: '王立群',
