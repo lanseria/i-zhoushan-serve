@@ -1,4 +1,5 @@
 export type AppMimeType = 'image/png' | 'image/jpeg';
+
 export interface BufferedFile {
   fieldname: string;
   originalname: string;
