@@ -8,7 +8,7 @@ import {
   Version,
 } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
-import { CreateUserDto } from 'src/dto/create-user.dto';
+import { CreateUserDto, SamplePointProxyDto } from 'src/common/dtos';
 import { SampleService } from './sample.service';
 
 @ApiTags('小程序端', '核酸采样服务')
@@ -41,8 +41,7 @@ export class SampleController {
    */
   @ApiOperation({ description: '核酸采样点服务跨域转发' })
   @Post('/points')
-  @Version('0.1.0')
-  getSampleV1(@Body() body) {
+  getSampleV1(@Body() body: SamplePointProxyDto) {
     return this.sampleService.getSampleV1(body);
   }
 

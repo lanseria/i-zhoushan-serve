@@ -1,29 +1,24 @@
-/**
- * Interface intended for requesting results paginated
- */
-export interface PaginationRequest {
-  // Number of records to skip (where the pagination shall start)
-  skip: number;
-  /**
-   * The index of the page where the pagination should start from.
-   *
-   * Its intended for the same purpose that `skip`, but the latter represents an amount of
-   * records that should be skipped.
-   *
-   * Should be used only when needed to handle the pagination by the current page index.
-   */
-  page?: number;
-
-  // Page size
-  limit: number;
-
-  // Sort order
-  order?: { [field: string]: 'ASC' | 'DESC' };
-
-  // Other params of type T
-  params?: any;
+export interface PaginationResponseVo<T> {
+  current: number;
+  skippedRecords: number;
+  pages: number;
+  hasNext: boolean;
+  records: T[];
+  payloadSize: number;
+  total: number;
 }
 
+export interface FileResponseVo {
+  name: string; //	对象名称。
+
+  prefix: string; //对象名称的前缀。
+
+  size: number; //对象的大小。
+
+  etag: string; //对象的etag值。
+
+  lastModified: Date; //最后修改时间。
+}
 /**
  * Interface designed to assign default parameters to pagination
  */
@@ -34,4 +29,15 @@ export interface DefaultPagination {
   defaultOrder?: any;
   defaultOrderDirection?: string;
   maxAllowedSize?: number;
+}
+
+export type AppMimeType = 'image/png' | 'image/jpeg';
+
+export interface BufferedFile {
+  fieldname: string;
+  originalname: string;
+  encoding: string;
+  mimetype: AppMimeType;
+  size: number;
+  buffer: Buffer | string;
 }

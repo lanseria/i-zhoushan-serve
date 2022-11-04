@@ -1,4 +1,5 @@
-import { createParamDecorator, ExecutionContext } from '@nestjs/common';
+import { createParamDecorator, ExecutionContext, Logger } from '@nestjs/common';
+import { ApiQuery } from '@nestjs/swagger';
 import { DefaultPagination } from './interfaces';
 
 /**
@@ -45,12 +46,29 @@ export const PaginationParams = createParamDecorator(
     }
 
     size = +size < +maxAllowedSize ? size : maxAllowedSize;
+    // Logger.debug('current: ' + current);
+    // Logger.debug('size: ' + size);
     return Object.assign(data ? data : {}, {
       skip,
       page: current,
-      limit: size,
+      size,
       order,
       params,
     });
   },
+  [
+    (target: any, key: string) => {
+      // Here it is. Use the `@ApiQuery` decorator purely as a function to define the meta only once here.
+      ApiQuery({
+        name: 'current',
+        schema: { default: 1, type: 'number', minimum: 1 },
+        required: false,
+      })(target, key, Object.getOwnPropertyDescriptor(target, key));
+      ApiQuery({
+        name: 'size',
+        schema: { default: 10, type: 'number', minimum: 1 },
+        required: false,
+      })(target, key, Object.getOwnPropertyDescriptor(target, key));
+    },
+  ],
 );

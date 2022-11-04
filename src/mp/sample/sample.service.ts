@@ -5,12 +5,12 @@ import { SAMPLEHEADERS, SAMPLE_SUBSCRIBE_TEMPLATE_ID } from './const';
 import { Model } from 'mongoose';
 import { User, UserDocument } from 'src/schemas/user.schema';
 import { InjectModel } from '@nestjs/mongoose';
-import { CreateUserDto } from 'src/dto/create-user.dto';
 import * as dayjs from 'dayjs';
 import { SchedulerRegistry } from '@nestjs/schedule';
 import { CronJob } from 'cron';
 import { MpService } from '../mp.service';
 import { Cache } from 'cache-manager';
+import { CreateUserDto } from 'src/common/dtos';
 
 @Injectable()
 export class SampleService {

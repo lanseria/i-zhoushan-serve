@@ -1,9 +1,8 @@
 import { HttpException, HttpStatus, Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { MinioService } from 'nestjs-minio-client';
-import { BufferedFile } from 'src/dto/file.dto';
 import * as CryptoJs from 'crypto-js';
-import { FileResponseDto } from 'src/common/dtos';
+import { BufferedFile, FileResponseVo } from 'src/common/interfaces';
 
 @Injectable()
 export class FileService {
@@ -21,18 +20,18 @@ export class FileService {
 
   public getFilesAndCount(
     pagination,
-  ): Promise<[projectEntities: FileResponseDto[], totalFiles: number]> {
+  ): Promise<[projectEntities: FileResponseVo[], totalFiles: number]> {
     // eslint-disable-next-line prefer-const
-    let { skip, limit: take } = pagination;
+    let { skip, size: take } = pagination;
     return new Promise((resolve, reject) => {
-      const fileList: FileResponseDto[] = [];
+      const fileList: FileResponseVo[] = [];
       const stream = this.minioClient.listObjects(this.bucketName);
       let total = 0;
       stream.on('data', (obj) => {
         total++;
         if (skip) {
           skip--;
-        } else if (fileList.length <= take) {
+        } else if (fileList.length < take) {
           fileList.push({
             ...obj,
             url: this.getFileUrl(obj.name),

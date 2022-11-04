@@ -1,8 +1,9 @@
-import { Controller, Get } from '@nestjs/common';
+import { Controller, Get, Logger } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { PaginationParams } from 'src/common/decorators';
-import { FileResponseDto, PaginationResponseDto } from 'src/common/dtos';
-import { PaginationRequest } from 'src/common/interfaces';
+import { PaginationRequestDto } from 'src/common/dtos';
+import { FileResponseVo, PaginationResponseVo } from 'src/common/interfaces';
+
 import { FileService } from './file.service';
 
 @ApiTags('PC端', '文件服务')
@@ -21,8 +22,8 @@ export class FileController {
   })
   @Get('page')
   async getFilePage(
-    @PaginationParams() pagination: PaginationRequest,
-  ): Promise<PaginationResponseDto<FileResponseDto>> {
+    @PaginationParams() pagination: PaginationRequestDto,
+  ): Promise<PaginationResponseVo<FileResponseVo>> {
     return this.fileService.getFilePage(pagination);
   }
 }

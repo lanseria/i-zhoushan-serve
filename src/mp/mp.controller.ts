@@ -8,7 +8,7 @@ import {
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiBody, ApiConsumes, ApiOperation, ApiTags } from '@nestjs/swagger';
-import { BufferedFile } from 'src/dto/file.dto';
+import { BufferedFile } from 'src/common/interfaces';
 import { MpService } from './mp.service';
 
 @ApiTags('公共服务', '小程序端')

@@ -1,5 +1,5 @@
-import { PaginationResponseDto } from './dtos';
-import { PaginationRequest } from './interfaces';
+import { PaginationRequestDto } from './dtos';
+import { PaginationResponseVo } from './interfaces';
 
 export class Pagination {
   /**
@@ -10,12 +10,12 @@ export class Pagination {
    * @returns {PaginationResponseDto}
    */
   static of<T>(
-    { limit, page, skip }: PaginationRequest,
+    { size, current, skip }: PaginationRequestDto,
     total: number,
     dtos: T[],
-  ): PaginationResponseDto<T> {
-    const pages = Math.floor(total / limit) + (total % limit > 0 ? 1 : 0);
-    const current = +page > 0 ? +page : 1;
+  ): PaginationResponseVo<T> {
+    const pages = Math.floor(total / size) + (total % size > 0 ? 1 : 0);
+    current = +current > 0 ? +current : 1;
     const hasNext = current <= pages - 1;
 
     return {

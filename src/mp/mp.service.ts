@@ -2,7 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import * as CryptoJs from 'crypto-js';
 import got from 'got';
-import { BufferedFile } from 'src/dto/file.dto';
+import { BufferedFile } from 'src/common/interfaces';
 import { FileService as MinioFileService } from 'src/file/file.service';
 import {
   MpLoginDto,

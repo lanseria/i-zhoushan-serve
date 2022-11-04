@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
+import { PaginationRequestDto } from 'src/common/dtos';
 import { Pagination } from 'src/common/helper';
-import { PaginationRequest } from 'src/common/interfaces';
 import { FileService as MinioFileService } from '../../file/file.service';
 
 @Injectable()
@@ -9,7 +9,7 @@ export class FileService {
   /**
    * 获取图片分页
    */
-  async getFilePage(pagination: PaginationRequest) {
+  async getFilePage(pagination: PaginationRequestDto) {
     const [files, total] = await this.minioFileService.getFilesAndCount(
       pagination,
     );

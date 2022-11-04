@@ -2,8 +2,8 @@ import { Controller, Get } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { SampleService } from './sample.service';
 import { PaginationParams } from 'src/common/decorators';
-import { PaginationRequest } from 'src/common/interfaces';
-import { PaginationResponseDto } from 'src/common/dtos';
+import { PaginationRequestDto } from 'src/common/dtos';
+import { PaginationResponseVo } from 'src/common/interfaces';
 @ApiTags('PC端', '核酸采样服务')
 @Controller({
   path: 'pc/sample',
@@ -16,8 +16,8 @@ export class SampleController {
   @ApiOperation({ description: '获取全部用户' })
   @Get('/users/page')
   getUsers(
-    @PaginationParams() pagination: PaginationRequest,
-  ): Promise<PaginationResponseDto<any>> {
+    @PaginationParams() pagination: PaginationRequestDto,
+  ): Promise<PaginationResponseVo<any>> {
     return this.sampleService.getUsers(pagination);
   }
 }
