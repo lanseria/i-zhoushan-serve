@@ -28,18 +28,21 @@ export class FileService {
       const fileList: FileResponseDto[] = [];
       const stream = this.minioClient.listObjects(this.bucketName);
       let total = 0;
-      stream.on('data', function (obj) {
+      stream.on('data', (obj) => {
         total++;
         if (skip) {
           skip--;
         } else if (fileList.length <= take) {
-          fileList.push(obj);
+          fileList.push({
+            ...obj,
+            url: this.getFileUrl(obj.name),
+          });
         }
       });
-      stream.on('error', function (err) {
+      stream.on('error', (err) => {
         reject(err);
       });
-      stream.on('end', function () {
+      stream.on('end', () => {
         resolve([fileList, total]);
       });
     });
