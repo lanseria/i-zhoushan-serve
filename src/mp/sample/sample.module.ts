@@ -5,6 +5,7 @@ import { MpService } from '../mp.service';
 import { SampleController } from './sample.controller';
 import { SampleService } from './sample.service';
 import { FileModule } from 'src/file/file.module';
+import { SamplePoint, SamplePointSchema } from 'src/schemas/samplePoint.schema';
 
 @Module({
   imports: [
@@ -12,6 +13,10 @@ import { FileModule } from 'src/file/file.module';
       {
         name: User.name,
         schema: UserSchema,
+      },
+      {
+        name: SamplePoint.name,
+        schema: SamplePointSchema,
       },
     ]),
     FileModule,

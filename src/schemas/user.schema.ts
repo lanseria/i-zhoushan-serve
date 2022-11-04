@@ -1,8 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
 
-export type UserDocument = User & Document;
-
 @Schema({
   timestamps: {
     currentTime: () => Math.floor(Date.now() / 1000),
@@ -30,5 +28,7 @@ export class User extends Document {
   @Prop({ required: true, type: Number })
   nextSampleDateTime: number;
 }
+
+export type UserDocument = User & Document;
 
 export const UserSchema = SchemaFactory.createForClass(User);

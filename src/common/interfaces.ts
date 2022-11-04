@@ -41,3 +41,24 @@ export interface BufferedFile {
   size: number;
   buffer: Buffer | string;
 }
+
+export interface ProxySamplePoint {
+  orgId: string;
+  orgName: string;
+  areaCode: string;
+  areaName: string;
+  address: string;
+  gisLng: string;
+  gisLat: string;
+  phone: string;
+  workTime: string;
+  levelName: string;
+  orgType: number;
+  serviceStatus: number;
+  distanceHospital: number;
+  isFree: number;
+  isFever: number;
+  isNeedHs: number;
+  isRed: number;
+  isYellow: number;
+}

@@ -11,11 +11,18 @@ import { CronJob } from 'cron';
 import { MpService } from '../mp.service';
 import { Cache } from 'cache-manager';
 import { CreateUserDto } from 'src/common/dtos';
+import {
+  SamplePoint,
+  SamplePointDocument,
+} from 'src/schemas/samplePoint.schema';
+import { ProxySamplePoint } from 'src/common/interfaces';
 
 @Injectable()
 export class SampleService {
   constructor(
     @InjectModel('User') private userModel: Model<UserDocument>,
+    @InjectModel('SamplePoint')
+    private samplePointModel: Model<SamplePointDocument>,
     @Inject(CACHE_MANAGER) private cacheManager: Cache,
     private schedulerRegistry: SchedulerRegistry,
     private mpService: MpService,
@@ -171,7 +178,43 @@ export class SampleService {
       // this.logger.debug('use realtime: ' + encodeValue);
     }
     const decodeBody = decodeStr(encodeValue);
+    this.proxyToSchema(decodeBody.data);
     return decodeBody;
+  }
+
+  async proxyToSchema(proxyData: ProxySamplePoint[]) {
+    //
+    const schemaData: SamplePoint[] = proxyData.map((item) => {
+      return new this.samplePointModel({
+        orgId: item.orgId,
+        orgName: item.orgName,
+        areaCode: item.areaCode,
+        areaName: item.areaName,
+        address: item.address,
+        phone: item.phone,
+        workTime: item.workTime,
+        levelName: item.levelName,
+        orgType: item.orgType,
+        serviceStatus: item.serviceStatus,
+        distanceHospital: item.distanceHospital,
+        isFree: item.isFree,
+        isFever: item.isFever,
+        isNeedHs: item.isNeedHs,
+        isRed: item.isRed,
+        isYellow: item.isYellow,
+        location: {
+          type: 'Point',
+          coordinates: [+item.gisLng, +item.gisLat],
+        },
+      });
+    });
+    this.samplePointModel
+      .insertMany(schemaData, {
+        ordered: false,
+      })
+      .catch((e) => {
+        this.logger.warn(e);
+      });
   }
 
   async createUser(createUserDto: CreateUserDto): Promise<User> {
