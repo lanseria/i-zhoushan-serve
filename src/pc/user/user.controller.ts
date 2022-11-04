@@ -12,6 +12,12 @@ export class UserController {
       token: '12345',
     };
   }
+
+  @Post('/logout')
+  async logout() {
+    return {};
+  }
+
   @Post('/info')
   async info() {
     return {
