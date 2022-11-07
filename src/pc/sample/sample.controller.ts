@@ -20,4 +20,15 @@ export class SampleController {
   ): Promise<PaginationResponseVo<any>> {
     return this.sampleService.getUsers(pagination);
   }
+
+  /**
+   * 获取全部核酸采样点位
+   */
+  @ApiOperation({ description: '获取全部用户' })
+  @Get('/points/page')
+  getPoints(
+    @PaginationParams() pagination: PaginationRequestDto,
+  ): Promise<PaginationResponseVo<any>> {
+    return this.sampleService.getPoints(pagination);
+  }
 }
