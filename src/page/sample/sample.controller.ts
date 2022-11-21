@@ -33,11 +33,18 @@ export class SampleController {
   ): Promise<PaginationResponseVo<any>> {
     return this.sampleService.getUsers(pagination);
   }
-
+  /**
+   * 获取全部核酸采样点位For地图
+   */
+  @ApiOperation({ description: '获取全部核酸采样点位For地图' })
+  @Get('/points/map')
+  getPointsForMap(): Promise<any> {
+    return this.sampleService.getPointsMap();
+  }
   /**
    * 获取全部核酸采样点位
    */
-  @ApiOperation({ description: '获取全部用户' })
+  @ApiOperation({ description: '获取全部核酸采样点位' })
   @Get('/points/page')
   getPoints(
     @PaginationParams() pagination: PaginationRequestDto,
