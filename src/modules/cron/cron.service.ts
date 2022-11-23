@@ -4,6 +4,7 @@ import { CronJob } from 'cron';
 import * as dayjs from 'dayjs';
 import { SAMPLE_SUBSCRIBE_TEMPLATE_ID } from 'src/common/const';
 import { MpService } from 'src/modules/mp/mp.service';
+import { SamplePointService } from '../sample-point/sample-point.service';
 import { UserService } from '../user/user.service';
 
 @Injectable()
@@ -11,6 +12,7 @@ export class CronService {
   constructor(
     private schedulerRegistry: SchedulerRegistry,
     private userService: UserService,
+    private samplePointService: SamplePointService,
     @Inject(forwardRef(() => MpService))
     private readonly mpService: MpService,
   ) {}
@@ -22,7 +24,24 @@ export class CronService {
     // 清空所有定时任务，以免越来越多
     this.removeAllCrons();
     // 刷新用户订阅定时任务
-    this.freshUserSubscribe();
+    this.freshUserSubscribe(true);
+    // 每小时获取一次全部核酸采样点数据
+    this.freshSamplePoint();
+    // 获取当前任务
+    this.getCrons();
+  }
+  /**
+   * 每小时获取一次全部核酸采样点数据
+   */
+  freshSamplePoint() {
+    //
+    const job = new CronJob('0 0 * * * *', () => {
+      // 执行获取部核酸采样点任务
+      this.logger.warn('执行获取部核酸采样点任务');
+      this.samplePointService.gotSamplePoint();
+    });
+    this.schedulerRegistry.addCronJob('everyHourCron', job);
+    job.start();
   }
 
   /**
@@ -38,14 +57,14 @@ export class CronService {
   /**
    * 刷新用户订阅服务与其他定时任务
    */
-  async freshUserSubscribe() {
-    this.removeAllCrons();
+  async freshUserSubscribe(isInit = false) {
     this.logger.debug('获取/刷新所有开启订阅的用户');
     // 清空用户订阅
     const users = await this.userService.find({ isSubscribe: true });
-    users.forEach((user) => {
-      this.schedulerRegistry.deleteCronJob(user._id);
-    });
+    !isInit &&
+      users.forEach((user) => {
+        this.schedulerRegistry.deleteCronJob(user._id);
+      });
     // 重新用户订阅
     users.forEach((user) => {
       const nextDate = dayjs.unix(user.nextSampleDateTime).toDate();

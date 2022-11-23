@@ -56,6 +56,29 @@ export class SamplePointService {
     return decodeBody;
   }
 
+  async gotSamplePoint() {
+    const paramData = {
+      orgName: '',
+      pageNum: 1,
+      pageSize: 14967,
+      areaName: '',
+      levelName: '',
+      serviceStatus: '',
+      gisLat: '',
+      gisLng: '',
+      isFree: '',
+      isRed: '',
+      isYellow: '',
+      isNeedHs: '',
+      isLive: '0',
+    };
+    const body = encodeStr(paramData);
+    const res = await this.gotService.getSamplePoint(body);
+    const encodeValue = res.body;
+    const decodeBody = decodeStr(encodeValue);
+    this.proxyToSchema(decodeBody);
+  }
+
   async proxyToSchema(proxyData: ProxySamplePoint[]) {
     //
     const schemaData: SamplePoint[] = proxyData.map((item) => {
