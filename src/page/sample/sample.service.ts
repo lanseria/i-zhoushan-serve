@@ -72,19 +72,14 @@ export class SampleService {
     return Pagination.of(pagination, totals, userDtos);
   }
   /**
-   * 刷新用户订阅服务
-   */
-  async freshUserSubscribe() {
-    this.cronService.freshUserSubscribe();
-  }
-  /**
    * 更新当前用户信息
    * @param createUserDto 用户DTO
    * @returns 用户DTO
    */
   async updateCurrentUser(createUserDto: CreateUserDto) {
     const user = await this.userService.updateCurrentUser(createUserDto);
-    this.freshUserSubscribe();
+    // 刷新用户订阅服务
+    this.cronService.freshUserSubscribe();
     return user;
   }
   /**
