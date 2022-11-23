@@ -19,18 +19,35 @@ export class CronService {
 
   async onApplicationBootstrap() {
     this.logger.debug('启动定时任务服务钩子');
+    // 清空所有定时任务，以免越来越多
+    this.removeAllCrons();
+    // 刷新用户订阅定时任务
     this.freshUserSubscribe();
   }
 
   /**
-   * 刷新用户订阅服务
+   * 移除全部定时任务
+   */
+  removeAllCrons() {
+    const jobs = this.schedulerRegistry.getCronJobs();
+    jobs.forEach((value, key, map) => {
+      this.schedulerRegistry.deleteCronJob(key);
+    });
+  }
+
+  /**
+   * 刷新用户订阅服务与其他定时任务
    */
   async freshUserSubscribe() {
     this.removeAllCrons();
     this.logger.debug('获取/刷新所有开启订阅的用户');
-
+    // 清空用户订阅
     const users = await this.userService.find({ isSubscribe: true });
-    users.map((user) => {
+    users.forEach((user) => {
+      this.schedulerRegistry.deleteCronJob(user._id);
+    });
+    // 重新用户订阅
+    users.forEach((user) => {
       const nextDate = dayjs.unix(user.nextSampleDateTime).toDate();
       const job = new CronJob(nextDate, () => {
         this.subscribeSampleSend(user.openid);
@@ -44,15 +61,6 @@ export class CronService {
       job.start();
     });
     this.getCrons();
-  }
-  /**
-   * 移除全部定时任务
-   */
-  removeAllCrons() {
-    const jobs = this.schedulerRegistry.getCronJobs();
-    jobs.forEach((value, key, map) => {
-      this.schedulerRegistry.deleteCronJob(key);
-    });
   }
   /**
    * 获取全部定时任务
