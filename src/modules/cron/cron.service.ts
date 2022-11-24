@@ -40,7 +40,7 @@ export class CronService {
       this.logger.warn('执行获取部核酸采样点任务');
       this.samplePointService.gotSamplePoint();
     });
-    this.schedulerRegistry.addCronJob('everyHourCron', job);
+    this.schedulerRegistry.addCronJob('每日每小时获取浙江省核酸采样点', job);
     job.start();
   }
 
