@@ -76,7 +76,7 @@ export class SamplePointService {
     const res = await this.gotService.getSamplePoint(body);
     const encodeValue = res.body;
     const decodeBody = decodeStr(encodeValue);
-    this.proxyToSchema(decodeBody);
+    this.proxyToSchema(decodeBody.data);
   }
 
   async proxyToSchema(proxyData: ProxySamplePoint[]) {
