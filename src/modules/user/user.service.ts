@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import * as dayjs from 'dayjs';
+import { dayjs } from 'src/common/utils';
 import { FilterQuery, Model } from 'mongoose';
 import { CreateUserDto } from 'src/common/dtos';
 import { User, UserDocument } from 'src/schemas/user.schema';

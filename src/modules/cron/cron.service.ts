@@ -2,11 +2,11 @@ import { forwardRef, Inject, Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { SchedulerRegistry } from '@nestjs/schedule';
 import { CronJob } from 'cron';
-import * as dayjs from 'dayjs';
 import { SAMPLE_SUBSCRIBE_TEMPLATE_ID } from 'src/common/const';
 import { MpService } from 'src/modules/mp/mp.service';
 import { SamplePointService } from '../sample-point/sample-point.service';
 import { UserService } from '../user/user.service';
+import { dayjs } from 'src/common/utils';
 
 @Injectable()
 export class CronService {
@@ -97,7 +97,9 @@ export class CronService {
       } catch (e) {
         next = 'error: next fire date is in the past!';
       }
-      this.logger.debug(`job: ${key} -> next: ${next}`);
+      this.logger.debug(
+        `job: ${key} -> next: ${dayjs(next).locale('zh-cn').format('LLLL')}`,
+      );
     });
   }
   /**

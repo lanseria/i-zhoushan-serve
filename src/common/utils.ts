@@ -1,12 +1,19 @@
 import { IV, WordArray } from './const';
 import * as CryptoJS from 'crypto-js';
 import * as coordtransform from 'coordtransform';
+import * as dayjs from 'dayjs';
+import * as relativeTime from 'dayjs/plugin/relativeTime';
+import * as localizedFormat from 'dayjs/plugin/localizedFormat';
+import 'dayjs/locale/zh-cn';
+dayjs.extend(relativeTime);
+dayjs.extend(localizedFormat);
+
 /**
  * 加密
  * @param paramData 未加密数据
  * @returns 加密数据
  */
-export const encodeStr = (paramData: any) => {
+const encodeStr = (paramData: any) => {
   const w = CryptoJS.enc.Utf8.parse(WordArray);
   const O = CryptoJS.enc.Hex.parse(IV);
   let body =
@@ -21,7 +28,7 @@ export const encodeStr = (paramData: any) => {
  * @param data 加密数据
  * @returns 解密数据
  */
-export const decodeStr = (data: string) => {
+const decodeStr = (data: string) => {
   const w = CryptoJS.enc.Utf8.parse(WordArray);
   const T = CryptoJS.enc.Hex.parse(IV);
   const i = data.replace(/\s+/g, '');
@@ -40,10 +47,12 @@ export const decodeStr = (data: string) => {
   return resData.result.t;
 };
 
-export const wgs842gcj02 = (coordinates) => {
+const wgs842gcj02 = (coordinates) => {
   return coordtransform.wgs842gcj02(coordinates[0], coordinates[1]);
 };
 
-export const gcj02towgs84 = (coordinates) => {
+const gcj02towgs84 = (coordinates) => {
   return coordtransform.gcj02towgs84(coordinates[0], coordinates[1]);
 };
+
+export { dayjs, gcj02towgs84, wgs842gcj02, encodeStr, decodeStr };
