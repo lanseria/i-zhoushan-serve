@@ -75,3 +75,21 @@ export class SamplePointProxyDto {
   @ApiProperty({ example: '' })
   isLive: string;
 }
+
+export class LocationObj {
+  @ApiProperty({ example: 122.89455745090368 })
+  lng: number;
+  @ApiProperty({ example: 30.384722970650998 })
+  lat: number;
+}
+
+export class LocationBounds {
+  @ApiProperty({
+    example: { lng: 122.89455745090368, lat: 30.384722970650998 },
+  })
+  _ne: LocationObj;
+  @ApiProperty({
+    example: { lng: 121.43200251926203, lat: 29.618833841204506 },
+  })
+  _sw: LocationObj;
+}

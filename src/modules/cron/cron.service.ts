@@ -1,4 +1,5 @@
 import { forwardRef, Inject, Injectable, Logger } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { SchedulerRegistry } from '@nestjs/schedule';
 import { CronJob } from 'cron';
 import * as dayjs from 'dayjs';
@@ -13,6 +14,7 @@ export class CronService {
     private schedulerRegistry: SchedulerRegistry,
     private userService: UserService,
     private samplePointService: SamplePointService,
+    private configService: ConfigService,
     @Inject(forwardRef(() => MpService))
     private readonly mpService: MpService,
   ) {}
@@ -20,13 +22,15 @@ export class CronService {
   private readonly logger = new Logger(CronService.name);
 
   async onApplicationBootstrap() {
+    const isDev = this.configService.get<boolean>('env.isDev');
+    this.logger.debug(isDev);
     this.logger.debug('启动定时任务服务钩子');
     // 清空所有定时任务，以免越来越多
     this.removeAllCrons();
     // 刷新用户订阅定时任务
     this.freshUserSubscribe(true);
-    // 每小时获取一次全部核酸采样点数据
-    this.freshSamplePoint();
+    // 每小时获取一次全部核酸采样点数据(仅限正式环境)
+    !isDev && this.freshSamplePoint();
     // 获取当前任务
     this.getCrons();
   }

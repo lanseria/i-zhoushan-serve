@@ -1,6 +1,10 @@
 // config/configuration.ts
 export const configConfiguration = () => {
   return {
+    env: {
+      env: process.env.ENV,
+      isDev: process.env.ENV !== 'production',
+    },
     api: {
       port: parseInt(process.env.API_PORT, 10) || 8080,
     },

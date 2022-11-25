@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   Get,
+  Logger,
   Post,
   Put,
   Query,
@@ -11,6 +12,7 @@ import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { PaginationParams } from 'src/common/decorators';
 import {
   CreateUserDto,
+  LocationBounds,
   PaginationRequestDto,
   SamplePointProxyDto,
 } from 'src/common/dtos';
@@ -23,6 +25,7 @@ import { SampleService } from './sample.service';
 })
 export class SampleController {
   constructor(private readonly sampleService: SampleService) {}
+  private readonly logger = new Logger(SampleController.name);
   /**
    * 获取全部用户
    */
@@ -37,9 +40,10 @@ export class SampleController {
    * 获取全部核酸采样点位For地图
    */
   @ApiOperation({ description: '获取全部核酸采样点位For地图' })
-  @Get('/points/map')
-  getPointsForMap(): Promise<any> {
-    return this.sampleService.getPointsMap();
+  @Post('/points/map')
+  getPointsForMap(@Body() body: LocationBounds): Promise<any> {
+    // this.logger.debug(body);
+    return this.sampleService.getPointsMap(body);
   }
   /**
    * 获取全部核酸采样点位

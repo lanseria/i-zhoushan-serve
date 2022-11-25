@@ -1,14 +1,16 @@
 import { CACHE_MANAGER, Inject, Injectable, Logger } from '@nestjs/common';
-import * as turf from '@turf/turf';
-import { CreateUserDto, PaginationRequestDto } from '../../common/dtos';
+import {
+  CreateUserDto,
+  LocationBounds,
+  PaginationRequestDto,
+} from '../../common/dtos';
 import { UserService } from 'src/modules/user/user.service';
 import { SamplePointService } from 'src/modules/sample-point/sample-point.service';
 import { CronService } from 'src/modules/cron/cron.service';
 import { MpService } from 'src/modules/mp/mp.service';
 import { Pagination } from 'src/common/helper';
 import { PaginationResponseVo } from 'src/common/interfaces';
-import { wgs842gcj02 } from 'src/common/utils';
-
+import * as turf from '@turf/turf';
 @Injectable()
 export class SampleService {
   constructor(
@@ -20,10 +22,24 @@ export class SampleService {
 
   private readonly logger = new Logger(SampleService.name);
 
-  async getPointsMap(): Promise<any> {
+  async getPointsMap(body: LocationBounds): Promise<any> {
     // const totals = await this.samplePointService.count();
+    const bboxPolygon = turf.bboxPolygon(
+      turf.bbox(
+        turf.multiPoint([
+          [body._ne.lng, body._ne.lat],
+          [body._sw.lng, body._sw.lat],
+        ]),
+      ),
+    );
     const samplePointDtos = await this.samplePointService
-      .find({})
+      .find({
+        location: {
+          $geoWithin: {
+            $geometry: bboxPolygon.geometry,
+          },
+        },
+      })
       .sort({ _id: 1 });
     const pointList = samplePointDtos.map((item) => {
       return turf.point(item.location.coordinates, {
