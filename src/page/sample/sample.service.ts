@@ -7,7 +7,7 @@ import { CronService } from 'src/modules/cron/cron.service';
 import { MpService } from 'src/modules/mp/mp.service';
 import { Pagination } from 'src/common/helper';
 import { PaginationResponseVo } from 'src/common/interfaces';
-import * as coordtransform from 'coordtransform';
+import { wgs842gcj02 } from 'src/common/utils';
 
 @Injectable()
 export class SampleService {
@@ -26,27 +26,20 @@ export class SampleService {
       .find({})
       .sort({ _id: 1 });
     const pointList = samplePointDtos.map((item) => {
-      return turf.point(
-        // gcj02 to wgs84
-        coordtransform.gcj02towgs84(
-          item.location.coordinates[0],
-          item.location.coordinates[1],
-        ),
-        {
-          _id: item._id,
-          orgId: item.orgId,
-          orgName: item.orgName,
-          serviceStatus: item.serviceStatus,
-          orgType: item.orgType,
-          levelName: item.levelName,
-          workTime: item.workTime,
-          areaCode: item.areaCode,
-          areaName: item.areaName,
-          address: item.address,
-          phone: item.phone,
-          isFree: item.isFree,
-        },
-      );
+      return turf.point(item.location.coordinates, {
+        _id: item._id,
+        orgId: item.orgId,
+        orgName: item.orgName,
+        serviceStatus: item.serviceStatus,
+        orgType: item.orgType,
+        levelName: item.levelName,
+        workTime: item.workTime,
+        areaCode: item.areaCode,
+        areaName: item.areaName,
+        address: item.address,
+        phone: item.phone,
+        isFree: item.isFree,
+      });
     });
     const featureCollection = turf.featureCollection(pointList);
     return featureCollection;
