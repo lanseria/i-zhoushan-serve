@@ -1,11 +1,11 @@
 import { Module } from '@nestjs/common';
 import { AllSchemasModule } from 'src/schemas';
 import { GotModule } from '../got/got.module';
-import { SamplePointService } from './sample-point.service';
+import { ParkingPointService } from './parking-point.service';
 
 @Module({
   imports: [AllSchemasModule, GotModule],
-  providers: [SamplePointService],
-  exports: [SamplePointService],
+  providers: [ParkingPointService],
+  exports: [ParkingPointService],
 })
-export class SamplePointModule {}
+export class ParkingPointModule {}

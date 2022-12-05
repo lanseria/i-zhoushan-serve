@@ -15,6 +15,7 @@ import { SamplePageModule } from './page/sample/sample.module';
 import { ParkingPageModule } from './page/parking/parking.module';
 import { UserPageModule } from './page/user/user.module';
 import { FilePageModule } from './page/file/file.module';
+import { ParkingPointModule } from './modules/parking-point/parking-point.module';
 
 @Module({
   imports: [
@@ -33,6 +34,7 @@ import { FilePageModule } from './page/file/file.module';
     FileModule,
     UserModule,
     SamplePointModule,
+    ParkingPointModule,
     GotModule,
     CronModule,
     SamplePageModule,
