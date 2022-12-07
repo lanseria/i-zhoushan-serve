@@ -8,10 +8,10 @@ import { PointLocation } from './common.schema';
   },
 })
 export class ParkingPoint extends Document {
-  @Prop({ required: true, type: String })
+  @Prop({ required: true, type: String, default: '' })
   name: string;
 
-  @Prop({ required: true, type: String })
+  @Prop({ required: true, type: String, default: '' })
   address: string;
   /**
    * WGS84
@@ -21,12 +21,12 @@ export class ParkingPoint extends Document {
   /**
    * 分享质量（1高2中3低）
    */
-  @Prop({ required: true, type: String })
+  @Prop({ required: true, type: String, default: '' })
   quality: string;
   /**
    * 是否免费（不免费的话如何收费）
    */
-  @Prop({ required: true, type: String })
+  @Prop({ required: true, type: String, default: '' })
   isFree: string;
 
   @Prop({ type: Number })

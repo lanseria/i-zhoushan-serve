@@ -2,10 +2,16 @@ import { Injectable } from '@nestjs/common';
 import { LocationBounds } from 'src/common/dtos';
 import * as turf from '@turf/turf';
 import { ParkingPointService } from 'src/modules/parking-point/parking-point.service';
+import { Feature, Point } from '@turf/turf';
 
 @Injectable()
 export class ParkingService {
   constructor(private parkingPointService: ParkingPointService) {}
+
+  async updatePointsForMap(body: Feature<Point>[]): Promise<any> {
+    return this.parkingPointService.proxyToSchema(body);
+  }
+
   async getPointsMap(body: LocationBounds): Promise<any> {
     // const totals = await this.samplePointService.count();
     const bboxPolygon = turf.bboxPolygon(
@@ -32,7 +38,6 @@ export class ParkingService {
         isFree: item.isFree,
       });
     });
-    const featureCollection = turf.featureCollection(pointList);
-    return featureCollection;
+    return pointList;
   }
 }

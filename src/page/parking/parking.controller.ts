@@ -1,5 +1,6 @@
-import { Body, Controller, Logger, Post } from '@nestjs/common';
+import { Body, Controller, Logger, Post, Put } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { Feature, Point } from '@turf/turf';
 import { LocationBounds } from 'src/common/dtos';
 import { ParkingService } from './parking.service';
 
@@ -9,7 +10,16 @@ export class ParkingController {
   constructor(private readonly parkingService: ParkingService) {}
   private readonly logger = new Logger(ParkingController.name);
   /**
-   * 获取全部核酸采样点位For地图
+   * 更新上传全部停车点位For地图
+   */
+  @ApiOperation({ description: '更新上传全部停车点位For地图' })
+  @Put('/points/map')
+  updatePointsForMap(@Body() body: Feature<Point>[]): Promise<any> {
+    // this.logger.debug(body);
+    return this.parkingService.updatePointsForMap(body);
+  }
+  /**
+   * 获取全部停车点位For地图
    */
   @ApiOperation({ description: '获取全部停车点位For地图' })
   @Post('/points/map')
