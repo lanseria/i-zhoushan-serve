@@ -9,6 +9,7 @@ async function bootstrap() {
     type: VersioningType.MEDIA_TYPE,
     key: 'v=',
   });
+  app.enableCors();
   configSwagger(app);
   await app.listen(AppModule.port);
   return AppModule;
