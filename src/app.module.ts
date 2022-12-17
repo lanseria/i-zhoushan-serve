@@ -16,6 +16,7 @@ import { ParkingPageModule } from './page/parking/parking.module';
 import { UserPageModule } from './page/user/user.module';
 import { FilePageModule } from './page/file/file.module';
 import { ParkingPointModule } from './modules/parking-point/parking-point.module';
+import { MapModule } from './page/map/map.module';
 
 @Module({
   imports: [
@@ -41,6 +42,7 @@ import { ParkingPointModule } from './modules/parking-point/parking-point.module
     ParkingPageModule,
     UserPageModule,
     FilePageModule,
+    MapModule,
   ],
   controllers: [AppController],
   providers: [AppService],

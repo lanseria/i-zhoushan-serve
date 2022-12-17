@@ -6,7 +6,6 @@ import {
   Post,
   Put,
   Query,
-  Version,
 } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { PaginationParams } from 'src/common/decorators';

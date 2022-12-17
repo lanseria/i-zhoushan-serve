@@ -1,4 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { Geometries } from '@turf/turf';
 /**
  * Interface intended for requesting results paginated
  */
@@ -92,4 +93,32 @@ export class LocationBounds {
     example: { lng: 121.43200251926203, lat: 29.618833841204506 },
   })
   _sw: LocationObj;
+}
+
+export class FeatureDto {
+  @ApiProperty({
+    example: '6953c9629da9ee7161905fe27ec33310',
+  })
+  id: string;
+  @ApiProperty({
+    example: 'Feature',
+  })
+  type: string;
+  @ApiProperty({
+    example: {
+      coordinates: [122.116247886086, 30.02189049955696],
+      type: 'Point',
+    },
+  })
+  geometry: Geometries;
+  @ApiProperty({
+    example: {
+      center: '[122.116247886086,30.02189049955696]',
+      'icon-image': '点Icon',
+      'icon-size': 0.3,
+      id: 'lRdb25pg9eLim5OgbWEpN',
+      type: 'InitPoint',
+    },
+  })
+  properties: any;
 }
