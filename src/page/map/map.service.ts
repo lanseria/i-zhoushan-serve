@@ -32,9 +32,11 @@ export class MapService {
   }
 
   async deleteMapFeature(id: string) {
+    // this.logger.debug(id);
     const mapFeature = await this.mapFeaturesModel.findOneAndDelete({
-      id,
+      'properties.id': id,
     });
+    // this.logger.debug(mapFeature);
     return mapFeature;
   }
 
