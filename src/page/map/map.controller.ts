@@ -1,4 +1,12 @@
-import { Body, Controller, Get, Logger, Post, Put } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Logger,
+  Param,
+  Post,
+  Put,
+} from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Feature } from '@turf/turf';
 import { FeatureDto, LocationBounds } from 'src/common/dtos';
@@ -22,6 +30,12 @@ export class MapController {
   @Put('/features')
   updateMapFeatures(@Body() body: FeatureDto) {
     return this.mapService.updateMapFeatures(body);
+  }
+
+  @ApiOperation({ description: '删除地图' })
+  @Delete('/features/:id')
+  deleteMapFeature(@Param('id') id: string) {
+    return this.mapService.deleteMapFeature(id);
   }
 
   @ApiOperation({ description: '获取地图' })

@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Feature } from '@turf/turf';
 import * as turf from '@turf/turf';
@@ -12,6 +12,7 @@ export class MapService {
     @InjectModel('MapFeatures')
     private mapFeaturesModel: Model<MapFeaturesDocument>,
   ) {}
+  private readonly logger = new Logger(MapService.name);
 
   async createMapFeatures(body: FeatureDto) {
     const mapFeature = new this.mapFeaturesModel(body);
@@ -19,8 +20,22 @@ export class MapService {
   }
 
   async updateMapFeatures(body: FeatureDto) {
-    const mapFeature = new this.mapFeaturesModel(body);
-    return await mapFeature.update();
+    const mapFeature = await this.mapFeaturesModel.findOneAndUpdate(
+      { id: body.id },
+      {
+        $set: {
+          properties: body.properties,
+        },
+      },
+    );
+    return mapFeature;
+  }
+
+  async deleteMapFeature(id: string) {
+    const mapFeature = await this.mapFeaturesModel.findOneAndDelete({
+      id,
+    });
+    return mapFeature;
   }
 
   async queryMapFeatures(body: LocationBounds) {
@@ -34,7 +49,7 @@ export class MapService {
     );
     const mapFeatures = await this.mapFeaturesModel
       .find({
-        location: {
+        geometry: {
           $geoWithin: {
             $geometry: bboxPolygon.geometry,
           },
